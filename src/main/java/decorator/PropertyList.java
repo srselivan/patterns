@@ -11,42 +11,38 @@ public class PropertyList  {
     }
 
     public void add(String properties) {
-        String[] splitProperties = properties.split(
-                "\\.",
-                properties.contains(".") ? 2 : 0
-        );
-        name = splitProperties[0];
-        System.out.println("splitProperties:" + name);
+        if (properties.contains(".")) {
+            int dotIndex = properties.indexOf(".");
+            String nameFromString = properties.substring(0, dotIndex);
 
-        PropertyList propertyList = new PropertyList();
+            PropertyList firstNext = new PropertyList();
+            String secondPartOfString = properties.substring(dotIndex + 1);
 
-        if ((properties.contains(".") ? 2 : 0) > 0) {
-            String otherProperties = splitProperties[1];
-
-            String[] splitOtherProperties = otherProperties.split(
-                    "\\.",
-                    otherProperties.contains(".") ? 2 : 0
-            );
-
-            String nextProperty = splitOtherProperties[0];
-
-            if (list.isEmpty()) {
-                propertyList.add(otherProperties);
-                list.add(propertyList);
+            if (list == null) {
+                list = new ArrayList<>();
+            }
+            if (name == null) {
+                name = nameFromString;
             } else {
-                for (var i = 0; i < list.size(); i++) {
-                    if (Objects.equals(list.get(i).getName(), nextProperty)) {
-                        if ((otherProperties.contains(".") ? 2 : 0) > 0) {
-                            list.get(i).add(splitOtherProperties[1]);
-                        }
-                    } else {
-                        propertyList.add(otherProperties);
-                        list.add(propertyList);
+                String nextName;
+                if (secondPartOfString.contains(".")){
+                    nextName = secondPartOfString.substring(0, secondPartOfString.indexOf("."));
+                }
+                else {
+                    nextName = secondPartOfString;
+                }
+                for (PropertyList wrapper : list) {
+                    String wrapperName = wrapper.getName();
+                    if (wrapperName.equals(nextName)) {
+                        wrapper.add(secondPartOfString);
+                        return;
                     }
                 }
-
             }
-
+            firstNext.add(properties.substring(dotIndex + 1));
+            list.add(firstNext);
+        } else {
+            name = properties;
         }
     }
 
